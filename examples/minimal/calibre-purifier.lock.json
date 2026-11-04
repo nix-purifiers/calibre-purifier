@@ -1,0 +1,63 @@
+{
+  "entries": [
+    {
+      "calibre": {
+        "index_name": "EpubMerge",
+        "name": "EpubMerge",
+        "version": [
+          3,
+          3,
+          0
+        ]
+      },
+      "hash": "sha256-joIeTDjOPJO6PG7sT2ORb0yYE4ZnlFweT/8oP4DHM3Q=",
+      "mirrors": [],
+      "path": "169744.zip",
+      "url": "https://code.calibre-ebook.com/plugins/169744.zip"
+    }
+  ],
+  "native": {
+    "catalog": {
+      "169744.zip": {
+        "author": "Jim Miller",
+        "category": "GUI",
+        "deprecated": false,
+        "description": "UI plugin to concatenate multiple epubs into one.",
+        "donate": null,
+        "file": "169744.zip",
+        "history": false,
+        "index_name": "EpubMerge",
+        "last_modified": "2026-08-21T13:55:20",
+        "minimum_calibre_version": [
+          5,
+          44,
+          0
+        ],
+        "name": "EpubMerge",
+        "original_url": "https://www.mobileread.com/forums/attachment.php?s=f89dd6b8deeb37504a669e99460cee62&attachmentid=128768&d=1787320520",
+        "size": 575590,
+        "supported_platforms": [
+          "windows",
+          "osx",
+          "linux"
+        ],
+        "thread_id": "169744",
+        "thread_url": "https://www.mobileread.com/forums/showthread.php?t=169744",
+        "uninstall": null,
+        "version": [
+          3,
+          3,
+          0
+        ]
+      }
+    }
+  },
+  "purifier": "calibre",
+  "sdk": "e4693bd490c835b5b639408989c56dcf16bdf2fddf5792f017e9576b263425ab",
+  "selection": {
+    "plugins": [
+      "EpubMerge"
+    ]
+  },
+  "version": 1
+}

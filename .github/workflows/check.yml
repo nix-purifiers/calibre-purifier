@@ -1,0 +1,49 @@
+name: check
+on:
+  push:
+    branches: [main]
+  pull_request:
+permissions:
+  contents: read
+jobs:
+  check:
+    strategy:
+      fail-fast: false
+      matrix:
+        runner: [ubuntu-latest, ubuntu-24.04-arm]
+    runs-on: ${{ matrix.runner }}
+    timeout-minutes: 120
+    steps:
+      - uses: actions/checkout@v4
+      - uses: cachix/install-nix-action@v31
+      - name: Evaluate without import from derivation
+        run: >-
+          nix eval --json --option allow-import-from-derivation false
+          .#checks --apply
+          'all: builtins.mapAttrs (_: checks: builtins.mapAttrs (_: drv: drv.drvPath) checks) all'
+      - run: nix flake check -L
+      - run: nix build .# --out-link result-cli
+      - run: nix build .#calibre --out-link result-calibre
+      - run: nix build .#xvfb --out-link result-xvfb
+      - run: nix build .#gui-test-env --out-link result-gui-env
+      - run: python3 tests/dependency-environment.py result-cli
+      - run: python3 tests/native.py result-cli result-calibre
+      - run: python3 tests/gui.py result-cli result-calibre result-xvfb result-gui-env
+      - run: python3 tests/artifacts.py result-cli result-calibre
+      - run: python3 tests/capture.py result-cli
+      - name: Check GUI process isolation and shared database exclusion
+        run: |
+          export CALIBRE_HOST_NETNS=$(readlink /proc/self/ns/net)
+          nix build --impure --no-link --expr '
+            let f = builtins.getFlake (toString ./.);
+            in f.lib.calibre-purifier.checkProcessIsolation {
+              system = builtins.currentSystem;
+              hostNetns = builtins.getEnv "CALIBRE_HOST_NETNS";
+            }' --option sandbox true
+      - name: Rebuild native plugins, book text and release
+        run: |
+          purifier_system=$(nix eval --impure --raw --expr builtins.currentSystem)
+          nix build --rebuild --no-link \
+            ".#checks.$purifier_system.environment" \
+            ".#checks.$purifier_system.project" \
+            ".#checks.$purifier_system.release"
