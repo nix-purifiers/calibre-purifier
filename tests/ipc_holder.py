@@ -1,4 +1,5 @@
 import sys
+
 from calibre.utils.lock import create_single_instance_mutex
 
 database = create_single_instance_mutex("db")

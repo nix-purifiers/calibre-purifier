@@ -1,6 +1,5 @@
 import os
 import subprocess
-from pathlib import Path
 
 # Never bind desktop-global calibre mutex names in the host network namespace.
 assert os.readlink("/proc/self/ns/net") != os.environ["CALIBRE_PROOF_HOST_NETNS"]
