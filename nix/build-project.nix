@@ -1,5 +1,6 @@
 {
   lib,
+  purifier,
   runCommand,
   python3,
   original,
@@ -15,6 +16,8 @@
   fetchers ? { },
   doCheck ? false,
   checkCommand ? "",
+  resourceRoots ? { },
+  resourceDependencies ? [ ],
 }:
 let
   driver = lib.fileset.toSource {
@@ -41,7 +44,7 @@ let
         "result"
       ]);
   };
-  project = runCommand "calibre-project" { } ''
+  builtProject = runCommand "calibre-project" { } ''
     export CALIBRE_PURIFIER_ENVIRONMENT=${profile} CALIBRE_PURIFIER_COMMAND_BINARY=${original}/bin/calibre-debug
     export CALIBRE_PURIFIER_HOOKS=${hooks}
     export CALIBRE_PYTHON_PATH=${original}/lib/calibre CALIBRE_RESOURCES_PATH=${original}/share/calibre
@@ -55,6 +58,17 @@ let
     ${python3}/bin/python ${driver}/calibre_purifier_run_build.py
     ${lib.optionalString doCheck checkCommand}
   '';
+  projections = lib.optionalAttrs (resourceRoots != { }) (
+    purifier.resourceProjections {
+      producer = builtProject;
+      roots = resourceRoots;
+      dependencies = resourceDependencies;
+      inherit runCommand python3;
+    }
+  );
+  project = builtProject // {
+    inherit projections;
+  };
   release =
     runCommand "calibre-project-release"
       {
@@ -75,6 +89,6 @@ in
     environment = profile;
   };
   tests = project;
-  inherit release;
+  inherit release projections;
   fetches = lock.entries;
 }

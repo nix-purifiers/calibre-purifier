@@ -85,6 +85,10 @@
           build = p.buildCalibreProject { src = ./examples/minimal; };
         in
         {
+          resource-projections = import ./tests/resource-projections.nix {
+            pkgs = pkgsFor system;
+            build = p.buildCalibreProject;
+          };
           cli = p.cli;
           inherit (build.packages) environment project;
           release = build.release;
