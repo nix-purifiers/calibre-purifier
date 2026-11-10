@@ -1,0 +1,8 @@
+{
+  "name": "calibre",
+  "builder": "Calibre",
+  "roots": {
+    "combined.txt": "combined.txt"
+  },
+  "changedFile": "first.html"
+}
